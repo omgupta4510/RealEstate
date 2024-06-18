@@ -1,0 +1,32 @@
+@import "../src/responsive.scss";
+
+.layout{
+    // background-color: skyblue;
+    height: 100vh;
+    max-width: 1366px;
+    margin-left:auto;
+    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    flex-direction: column;
+
+
+    @include lg{
+        // background-color: pink; 
+        max-width: 1280px;
+    }
+    @include md{
+        // background-color: antiquewhite; 
+        max-width: 768px;
+    }
+    @include sm{
+        // background-color:antiquewhite; 
+        max-width: 640px;
+    }
+    
+    .content{
+        // background-color: aqua;
+        flex:1;
+    }
+}
