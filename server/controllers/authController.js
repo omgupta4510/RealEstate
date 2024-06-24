@@ -51,7 +51,7 @@ const login=async (req,res)=>{
 
 const logout=(req,res)=>{
     try{
-        res.clearCookie("test").status(200).json({message:"Logout Succesfull"});
+        res.clearCookie("token").status(200).json({message:"Logout Succesfull"});
     }catch(err){
         res.status(501).json("Intern server error");
     }
