@@ -1,6 +1,7 @@
 const bcrypt=require("bcrypt");
 const prisma=require("../lib/prisma");
-const {jwtAuthMiddleware,generateToken}=require("../jwt");
+require('dotenv').config();
+const jwt=require("jsonwebtoken");
 // console.log(prisma);
 // import { use } from "../routes/authRoutes";
 
@@ -30,19 +31,24 @@ const login=async (req,res)=>{
         const user=await prisma.user.findUnique({
             where:{username},
         });
-        // console.log("done");
+
+        console.log("done");
         if(!user)return res.status(403).json({message:"User is invalid"});
-        
         const isPasswordValid=await bcrypt.compare(password,user.password);
         if(!(isPasswordValid))return res.status(401).json({message:"Invalid Credentials"});
-        const token=generateToken(user.id);
         const age=1000*60*60*7*24;
+        const token=jwt.sign({
+            id:user.id,
+            isAdmin:false,
+        },process.env.JWT_SECERT,{expiresIn:age});
+        
+        const {password:userPassword,...userInfo}=user;
         res.cookie("token",token,{
             httpOnly:true,
             maxAge:age
-        }).status(200).json({message:"Success"});
+        }).status(200).json(userInfo);
         
-        // res.setHeader("Set-Cookie","test="+"myValue").json("success");
+        // res.setHeader("Set-Cookie","test="+"myValue").json(userInfo);
     }catch(err){
         console.log(err);
         res.status(500).json({message:"Failed to login!"});

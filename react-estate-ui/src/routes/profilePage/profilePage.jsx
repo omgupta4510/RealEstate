@@ -1,41 +1,63 @@
 import './profilePage.scss'
 import List from '../../components/list/list'
 import Chat from '../../components/chat/chat'
+import apiRequest from '../../lib/apiRequest'
+import { Navigate, useNavigate ,Link} from 'react-router-dom'
+import { AuthContext } from '../../context/AuthContext'
+import { useContext, useEffect } from 'react'
 
 function ProfilePage(){
+  const navigate=useNavigate();
+
+  
+  const {updateUser,currentUser}=useContext(AuthContext);
+  const handleLogout=async ()=>{
+    try{
+      const res=apiRequest.post("auth/logout");
+      updateUser(null);
+      navigate("/");
+    }catch(err){
+      console.log(err);
+    }
+  }
   return (
-    <div className='profilePage'>
-      <div className="details">
-        <div className="wrapper">
-          <div className="title">
-            <h1>User Information</h1>
-            <button>Update Profile</button>
+    !currentUser ? (<Navigate to="/login"/>):(
+      <div className='profilePage'>
+        <div className="details">
+          <div className="wrapper">
+            <div className="title">
+              <h1>User Information</h1>
+              <Link to="/profile/update">
+              <button>Update Profile</button>
+              </Link>
+            </div>
+            <div className="info">
+              <span>Avatar:
+                <img src={currentUser.avatar || "/noavatar.jpg"} alt="" /></span>
+              <span>Username:
+                <b>{currentUser.username}</b></span>
+              <span>E-mail:
+                <b>{currentUser.email}</b></span>
+                <button onClick={handleLogout}>Logout</button>
+            </div>
+            <div className="title">
+              <h1>My List</h1>
+              <button>Create new Post</button>
+            </div>
+            <List/>
+            <div className="title">
+              <h1>Saved List</h1>
+            </div>
+            <List/>
           </div>
-          <div className="info">
-            <span>Avatar:
-              <img src="/amisha.jpg" alt="" /></span>
-            <span>Username:
-               <b>Amisha Dixit</b></span>
-            <span>E-mail:
-               <b>amishadixit39@gmail.com</b></span>
+        </div>
+        <div className="chatCounter">
+          <div className="wrapper">
+              <Chat/>
           </div>
-          <div className="title">
-            <h1>My List</h1>
-            <button>Create new Post</button>
-          </div>
-          <List/>
-          <div className="title">
-            <h1>Saved List</h1>
-          </div>
-          <List/>
         </div>
       </div>
-      <div className="chatCounter">
-        <div className="wrapper">
-            <Chat/>
-        </div>
-      </div>
-    </div>
+    )
   )
 }
 
